@@ -12,13 +12,17 @@
 
 package gui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import org.opencv.core.Core;
@@ -35,194 +39,304 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
 /**
- *
+ * 
  * @author Taha Emara
  */
 public class FaceDetection extends JFrame {
-///
+	// /
 
-    private DaemonThread myThread = null;
-    int count = 0;
-    VideoCapture webSource = null;
-    Mat frame = new Mat();
-    MatOfByte mem = new MatOfByte();
-    CascadeClassifier faceDetector = new CascadeClassifier(FaceDetection.class.getResource("haarcascade_frontalface_alt.xml").getPath().substring(1));
-    MatOfRect faceDetections = new MatOfRect();
- 
-///    
+	private DaemonThread myThread = null;
+	int count = 0;
+	VideoCapture webSource = null;
+	Mat frame = new Mat();
+	MatOfByte mem = new MatOfByte();
+	CascadeClassifier faceDetector = new CascadeClassifier(FaceDetection.class
+			.getResource("haarcascade_frontalface_alt.xml").getPath()
+			.substring(1));
+	String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
+	CascadeClassifier eyes_cascade;
+	MatOfRect faceDetections = new MatOfRect();
+	
+	public int recX;
+	public int recY;
+	public int recW;
+	public int recH;
 
-    class DaemonThread implements Runnable {
+	// /
 
-        protected volatile boolean runnable = false;
+	class DaemonThread implements Runnable {
 
-        public void run() {
-            synchronized (this) {
-                while (runnable) {
-                    if (webSource.grab()) {
-                        try {
-                            webSource.retrieve(frame);
-                            Graphics g = jPanel1.getGraphics();
-                            faceDetector.detectMultiScale(frame, faceDetections);
-                            for (Rect rect : faceDetections.toArray()) {
-                               // System.out.println("ttt");
-                            	Imgproc.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
-                                        new Scalar(0, 255,0));
-                            }
-                            Imgcodecs.imencode(".bmp", frame, mem);
-                            Image im = ImageIO.read(new ByteArrayInputStream(mem.toArray()));
-                            BufferedImage buff = (BufferedImage) im;
-                            if (g.drawImage(buff, 0, 0, getWidth(), getHeight()-150 , 0, 0, buff.getWidth(), buff.getHeight(), null)) {
-                                if (runnable == false) {
-                                    System.out.println("Paused ..... ");
-                                    this.wait();
-                                }
-                            }
-                        } catch (Exception ex) {
-                            System.out.println("Error");
-                        }
-                    }
-                }
-            }
-        }
-    }
+		protected volatile boolean runnable = false;
+		
+		public void run() {
+			synchronized (this) {
+				while (runnable) {
+					if (webSource.grab()) {
+						try {
+							// eyes_cascade.load(eyes_cascade_name);
+							webSource.retrieve(frame);
+							Graphics g = jPanel1.getGraphics();
+							faceDetector
+									.detectMultiScale(frame, faceDetections);
+							for (Rect rect : faceDetections.toArray()) {
+								// System.out.println("ttt");
+								Imgproc.rectangle(frame, new Point(rect.x,
+										rect.y), new Point(rect.x + rect.width,
+										rect.y + rect.height), new Scalar(0,
+										255, 0));
+								setRecX(rect.x);
+								setRecY(rect.y);
+								setRecW(rect.width);
+								setRecH(rect.height);
 
-/////////
-    /**
-     * Creates new form FaceDetection
-     */
-    public FaceDetection() {
-        initComponents();
-        System.out.println(FaceDetection.class.getResource("haarcascade_frontalface_alt.xml").getPath().substring(1));
-    }
+							}
+							Imgcodecs.imencode(".bmp", frame, mem);
+							Image im = ImageIO.read(new ByteArrayInputStream(
+									mem.toArray()));
+							BufferedImage buff = (BufferedImage) im;
+							if (g.drawImage(buff, 0, 0, getWidth(),
+									getHeight() - 150, 0, 0, buff.getWidth(),
+									buff.getHeight(), null)) {
+								if (runnable == false) {
+									System.out.println("Paused ..... ");
+									this.wait();
+								} else {
+										
+									/*
+									  BufferedImage img = null; img =
+									  ImageIO.read(new
+									  File("files\\Hitler.png"));
+									  g.drawImage(img, getRecX() + getRecW()/2,
+									  getRecY(), getRecW()/2,
+									  getRecW()/2,null);
+									 /
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+									/*
+									  Hitler Mode 
+									  
+									  BufferedImage hitler = null;
+									  hitler = ImageIO.read(new
+									  File("files\\faca.png"));
+									  g.drawImage(hitler, getRecX() +
+									  getRecW()/3, getRecY() - getRecH()/2 -
+									  20, getRecW(), getRecW(),null);
+									  
+									  
+									  BufferedImage hithat = null; hithat =
+									  ImageIO.read(new
+									  File("files\\hithat.png"));
+									  g.drawImage(img, getRecX() + getRecW()/3,
+									  getRecY() - getRecH() - 30, getRecW(),
+									  getRecW(),null);
+									  
+									  
+									 */
+									// Osama mode
+									BufferedImage osama = null;
+									osama = ImageIO.read(new File("files\\osama.png"));
+									g.drawImage(osama, getRecX() + getRecW() / 4, getRecY() - getRecH() / 2 ,
+											getRecW(), getRecW(), null);
+									
+								}
+							}
+						} catch (Exception ex) {
+							System.out.println("Error");
+						}
+					}
+				}
+			}
+		}
+	}
 
-        jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+	// ///////
+	/**
+	 * Creates new form FaceDetection
+	 */
+	public FaceDetection() {
+		initComponents();
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+		this.setResizable(false);
+		System.out.println(FaceDetection.class
+				.getResource("haarcascade_frontalface_alt.xml").getPath()
+				.substring(1));
+	}
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
+	// <editor-fold defaultstate="collapsed"
+	// desc="Generated Code">//GEN-BEGIN:initComponents
+	private void initComponents() {
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 376, Short.MAX_VALUE)
-        );
+		jPanel1 = new javax.swing.JPanel();
+		jButton1 = new javax.swing.JButton();
+		jButton2 = new javax.swing.JButton();
+		
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Start");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(
+				jPanel1);
+		jPanel1.setLayout(jPanel1Layout);
+		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 0,
+				Short.MAX_VALUE));
+		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 376,
+				Short.MAX_VALUE));
 
-        jButton2.setText("Pause");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
+		jButton1.setText("Start");
+		jButton1.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jButton1ActionPerformed(evt);
+			}
+		});
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(255, 255, 255)
-                .addComponent(jButton1)
-                .addGap(86, 86, 86)
-                .addComponent(jButton2)
-                .addContainerGap(258, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+		jButton2.setText("Pause");
+		jButton2.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jButton2ActionPerformed(evt);
+			}
+		});
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
+				getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						layout.createSequentialGroup()
+								.addGap(24, 24, 24)
+								.addComponent(jPanel1,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE).addContainerGap())
+				.addGroup(
+						layout.createSequentialGroup().addGap(255, 255, 255)
+								.addComponent(jButton1).addGap(86, 86, 86)
+								.addComponent(jButton2)
+								.addContainerGap(258, Short.MAX_VALUE)));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addComponent(jPanel1,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.BASELINE)
+												.addComponent(jButton1)
+												.addComponent(jButton2))
+								.addContainerGap(
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE)));
 
-    private void jButton2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        myThread.runnable = false;            // stop thread
-        jButton2.setEnabled(false);   // activate start button 
-        jButton1.setEnabled(true);     // deactivate stop button
-        
-        webSource.release();  // stop caturing fron cam
+		pack();
+	}// </editor-fold>//GEN-END:initComponents
 
+	private void jButton2ActionPerformed(ActionEvent evt) {// GEN-FIRST:event_jButton2ActionPerformed
+		myThread.runnable = false; // stop thread
+		jButton2.setEnabled(false); // activate start button
+		jButton1.setEnabled(true); // deactivate stop button
 
-    }//GEN-LAST:event_jButton2ActionPerformed
+		webSource.release(); // stop caturing fron cam
 
-    private void jButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+	}// GEN-LAST:event_jButton2ActionPerformed
 
-        webSource = new VideoCapture(0); // video capture from default cam
-        myThread = new DaemonThread(); //create object of thread class
-        Thread t = new Thread(myThread);
-        t.setDaemon(true);
-        myThread.runnable = true;
-        t.start();                 //start thrad
-        jButton1.setEnabled(false);  // deactivate start button
-        jButton2.setEnabled(true);  //  activate stop button
+	private void jButton1ActionPerformed(ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
 
+		webSource = new VideoCapture(0); // video capture from default cam
+		myThread = new DaemonThread(); // create object of thread class
+		Thread t = new Thread(myThread);
+		t.setDaemon(true);
+		myThread.runnable = true;
+		t.start(); // start thrad
+		jButton1.setEnabled(false); // deactivate start button
+		jButton2.setEnabled(true); // activate stop button
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+	}// GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
- 
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+	/**
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(String args[]) {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FaceDetection().setVisible(true);
-            }
-        });
-    }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JPanel jPanel1;
-    // End of variables declaration//GEN-END:variables
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
+					.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		// </editor-fold>
+
+		/* Create and display the form */
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				new FaceDetection().setVisible(true);
+			}
+		});
+	}
+
+	public int getRecX() {
+		return recX;
+	}
+
+	public void setRecX(int recX) {
+		this.recX = recX;
+	}
+
+	public int getRecY() {
+		return recY;
+	}
+
+	public void setRecY(int recY) {
+		this.recY = recY;
+	}
+
+	public int getRecW() {
+		return recW;
+	}
+
+	public void setRecW(int recW) {
+		this.recW = recW;
+	}
+
+	public int getRecH() {
+		return recH;
+	}
+
+	public void setRecH(int recH) {
+		this.recH = recH;
+	}
+
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton jButton1;
+	private javax.swing.JButton jButton2;
+	private javax.swing.JPanel jPanel1;
+	// End of variables declaration//GEN-END:variables
 }

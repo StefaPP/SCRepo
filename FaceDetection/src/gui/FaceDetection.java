@@ -1,15 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Author: Taha Emara
-//
-// Youtube Cahnnel : http://www.youtube.com/user/omar0103637
-// Facebook Page : https://www.facebook.com/IcPublishes
-// Linkedin Profile : http://eg.linkedin.com/pub/taha-emara/a4/1ab/524/
-// E-mail: : tahaemara.eng@gmail.com
-//
-//                   Real time face detection using OpenCV with Java
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 package gui;
 
 import java.awt.Dimension;
@@ -20,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -40,7 +29,8 @@ import org.opencv.videoio.VideoCapture;
 
 /**
  * 
- * @author Taha Emara
+ * @author Stefan Popov Plavsic
+ * @author Aleksandar Okiljevic
  */
 public class FaceDetection extends JFrame {
 	// /
@@ -50,40 +40,37 @@ public class FaceDetection extends JFrame {
 	VideoCapture webSource = null;
 	Mat frame = new Mat();
 	MatOfByte mem = new MatOfByte();
-	CascadeClassifier faceDetector = new CascadeClassifier(FaceDetection.class
-			.getResource("haarcascade_frontalface_alt.xml").getPath()
-			.substring(1));
-	String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
-	CascadeClassifier eyes_cascade;
+	CascadeClassifier faceDetector = new CascadeClassifier(
+			FaceDetection.class.getResource("haarcascade_frontalface_alt.xml").getPath().substring(1));
 	MatOfRect faceDetections = new MatOfRect();
-	
+	public int random = 0;
 	public int recX;
 	public int recY;
 	public int recW;
 	public int recH;
+	public boolean mozePoliticar = false;
+	public boolean mozeGlumac = false;
+	public boolean mozeFudbaler = false;
 
 	// /
+	public BufferedImage img = null;
 
 	class DaemonThread implements Runnable {
 
 		protected volatile boolean runnable = false;
-		
+
 		public void run() {
 			synchronized (this) {
 				while (runnable) {
 					if (webSource.grab()) {
 						try {
-							// eyes_cascade.load(eyes_cascade_name);
+
 							webSource.retrieve(frame);
 							Graphics g = jPanel1.getGraphics();
-							faceDetector
-									.detectMultiScale(frame, faceDetections);
+							faceDetector.detectMultiScale(frame, faceDetections);
 							for (Rect rect : faceDetections.toArray()) {
-								// System.out.println("ttt");
-								Imgproc.rectangle(frame, new Point(rect.x,
-										rect.y), new Point(rect.x + rect.width,
-										rect.y + rect.height), new Scalar(0,
-										255, 0));
+								Imgproc.rectangle(frame, new Point(rect.x, rect.y),
+										new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
 								setRecX(rect.x);
 								setRecY(rect.y);
 								setRecW(rect.width);
@@ -91,52 +78,94 @@ public class FaceDetection extends JFrame {
 
 							}
 							Imgcodecs.imencode(".bmp", frame, mem);
-							Image im = ImageIO.read(new ByteArrayInputStream(
-									mem.toArray()));
+							Image im = ImageIO.read(new ByteArrayInputStream(mem.toArray()));
 							BufferedImage buff = (BufferedImage) im;
-							if (g.drawImage(buff, 0, 0, getWidth(),
-									getHeight() - 150, 0, 0, buff.getWidth(),
+							if (g.drawImage(buff, 0, 0, getWidth(), getHeight() - 150, 0, 0, buff.getWidth(),
 									buff.getHeight(), null)) {
 								if (runnable == false) {
 									System.out.println("Paused ..... ");
 									this.wait();
 								} else {
-										
-									/*
-									  BufferedImage img = null; img =
-									  ImageIO.read(new
-									  File("files\\Hitler.png"));
-									  g.drawImage(img, getRecX() + getRecW()/2,
-									  getRecY(), getRecW()/2,
-									  getRecW()/2,null);
-									 /
 
 									/*
-									  Hitler Mode 
-									  
-									  BufferedImage hitler = null;
-									  hitler = ImageIO.read(new
-									  File("files\\faca.png"));
-									  g.drawImage(hitler, getRecX() +
-									  getRecW()/3, getRecY() - getRecH()/2 -
-									  20, getRecW(), getRecW(),null);
-									  
-									  
-									  BufferedImage hithat = null; hithat =
-									  ImageIO.read(new
-									  File("files\\hithat.png"));
-									  g.drawImage(img, getRecX() + getRecW()/3,
-									  getRecY() - getRecH() - 30, getRecW(),
-									  getRecW(),null);
-									  
-									  
+									 * BufferedImage img = null; img =
+									 * ImageIO.read(new
+									 * File("files\\Hitler.png"));
+									 * g.drawImage(img, getRecX() + getRecW()/2,
+									 * getRecY(), getRecW()/2,
+									 * getRecW()/2,null); /
+									 * 
+									 * /* Hitler Mode
+									 * 
+									 * BufferedImage hitler = null; hitler =
+									 * ImageIO.read(new
+									 * File("files\\faca.png"));
+									 * g.drawImage(hitler, getRecX() +
+									 * getRecW()/3, getRecY() - getRecH()/2 -
+									 * 20, getRecW(), getRecW(),null);
+									 * 
+									 * 
+									 * BufferedImage hithat = null; hithat =
+									 * ImageIO.read(new
+									 * File("files\\hithat.png"));
+									 * g.drawImage(img, getRecX() + getRecW()/3,
+									 * getRecY() - getRecH() - 30, getRecW(),
+									 * getRecW(),null);
+									 * 
+									 * 
+									 * 
 									 */
 									// Osama mode
-									BufferedImage osama = null;
-									osama = ImageIO.read(new File("files\\osama.png"));
-									g.drawImage(osama, getRecX() + getRecW() / 4, getRecY() - getRecH() / 2 ,
-											getRecW(), getRecW(), null);
-									
+
+									if (mozeGlumac == true) {
+										switch (random) {
+										case 1:
+											img = ImageIO.read(new File("files\\sparta.png"));
+											g.drawImage(img, getRecX() + getRecW() / 3, getRecY() - getRecH() / 4,
+													getRecW(), getRecH(), null);
+											break;
+
+										case 2:
+											img = ImageIO.read(new File("files\\brad.png"));
+											g.drawImage(img, getRecX() + getRecW() / 3, getRecY() - getRecH() / 4,
+													getRecW(), getRecH(), null);
+											break;
+										case 3:
+											img = ImageIO.read(new File("files\\smit.png"));
+											g.drawImage(img, getRecX() + getRecW() / 3, getRecY() - getRecH() / 4,
+													getRecW(), getRecH(), null);
+											break;
+										}
+									}
+									float scale = (float) 0.0;
+									if(getRecX() <50 && getRecY()<50){
+										scale = (float) 2;
+									}
+									if (mozePoliticar == true) {
+										switch (random) {
+										case 1:
+											img = ImageIO.read(new File("files\\obama.png"));
+										    if((getRecX()>250 && getRecY()<100) || (getRecX()>200 && getRecY()<100)){
+											g.drawImage(img,getRecX() + (getRecW()/4*2), getRecY() - getRecH()*4 / 3,
+													getRecW(), getRecH(), null);
+											break;}else{
+												g.drawImage(img,getRecX() + getRecW() / 2, getRecY() - getRecH() / 3,
+														getRecW(), getRecH(), null);	
+												break;
+											}
+
+										case 2:
+											img = ImageIO.read(new File("files\\kim.png"));
+											g.drawImage(img, getRecX() + getRecW() / 2, getRecY() - getRecH() / 3,
+													getRecW(), getRecH(), null);
+											break;
+										case 3:
+											img = ImageIO.read(new File("files\\putin.png"));
+											g.drawImage(img, getRecX() + getRecW() / 2, getRecY() - getRecH() / 3,
+													getRecW(), getRecH(), null);
+											break;
+										}
+									}
 								}
 							}
 						} catch (Exception ex) {
@@ -155,11 +184,9 @@ public class FaceDetection extends JFrame {
 	public FaceDetection() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 		this.setResizable(false);
-		System.out.println(FaceDetection.class
-				.getResource("haarcascade_frontalface_alt.xml").getPath()
-				.substring(1));
+		System.out.println(FaceDetection.class.getResource("haarcascade_frontalface_alt.xml").getPath().substring(1));
 	}
 
 	/**
@@ -169,24 +196,25 @@ public class FaceDetection extends JFrame {
 	 */
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
+	// <editor-fold defaultstate="collapsed" desc="Generated
+	// <editor-fold defaultstate="collapsed" desc="Generated Code">
 	private void initComponents() {
 
 		jPanel1 = new javax.swing.JPanel();
 		jButton1 = new javax.swing.JButton();
 		jButton2 = new javax.swing.JButton();
-		
+		jButton3 = new javax.swing.JButton();
+		jButton5 = new javax.swing.JButton();
+		jButton3.setEnabled(false);
+		jButton5.setEnabled(false);
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(
-				jPanel1);
+		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
 		jPanel1.setLayout(jPanel1Layout);
-		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 0,
-				Short.MAX_VALUE));
-		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 376,
-				Short.MAX_VALUE));
+		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 692, Short.MAX_VALUE));
+		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGap(0, 401, Short.MAX_VALUE));
 
 		jButton1.setText("Start");
 		jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -202,65 +230,100 @@ public class FaceDetection extends JFrame {
 			}
 		});
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
+		jButton3.setText("Koji ste glumac???");
+		jButton3.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jButton3ActionPerformed(evt);
+			}
+		});
+
+		jButton5.setText("Koji ste politicar???");
+		jButton5.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jButton5ActionPerformed(evt);
+			}
+		});
+
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addGap(24, 24, 24)
-								.addComponent(jPanel1,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE).addContainerGap())
-				.addGroup(
-						layout.createSequentialGroup().addGap(255, 255, 255)
-								.addComponent(jButton1).addGap(86, 86, 86)
-								.addComponent(jButton2)
-								.addContainerGap(258, Short.MAX_VALUE)));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(jPanel1,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(jButton1)
-												.addComponent(jButton2))
-								.addContainerGap(
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE)));
+		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
+				.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createSequentialGroup().addContainerGap(92, Short.MAX_VALUE).addComponent(
+								jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addGroup(layout.createSequentialGroup().addGap(74, 74, 74).addComponent(jButton1)
+								.addGap(38, 38, 38).addComponent(jButton2).addGap(73, 73, 73)
+								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+										.addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 169,
+												Short.MAX_VALUE)
+										.addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+				.addContainerGap()));
+		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
+				.createSequentialGroup().addContainerGap()
+				.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+						javax.swing.GroupLayout.PREFERRED_SIZE)
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
+						.createSequentialGroup()
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(jButton1).addComponent(jButton2))
+						.addGap(48, 48, 48))
+						.addGroup(layout.createSequentialGroup().addGap(18, 18, 18).addComponent(jButton3)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(jButton5).addContainerGap()))));
 
 		pack();
-	}// </editor-fold>//GEN-END:initComponents
+	}// </editor-fold>
+
+	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
+		random = randInt(1, 3);
+		mozePoliticar = true;
+		mozeGlumac= false;
+
+	}
+
+	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+		random = randInt(1, 3);
+		mozePoliticar = false;
+		mozeGlumac= true;
+	}
+
+	public static int randInt(int min, int max) {
+
+		// Usually this can be a field rather than a method variable
+		Random rand = new Random();
+
+		// nextInt is normally exclusive of the top value,
+		// so add 1 to make it inclusive
+		int randomNum = rand.nextInt((max - min) + 1) + min;
+
+		return randomNum;
+	}
 
 	private void jButton2ActionPerformed(ActionEvent evt) {// GEN-FIRST:event_jButton2ActionPerformed
-		myThread.runnable = false; // stop thread
+		myThread.runnable = false;
 		jButton2.setEnabled(false); // activate start button
 		jButton1.setEnabled(true); // deactivate stop button
-
-		webSource.release(); // stop caturing fron cam
+		webSource.release();
 
 	}// GEN-LAST:event_jButton2ActionPerformed
 
 	private void jButton1ActionPerformed(ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-
-		webSource = new VideoCapture(0); // video capture from default cam
-		myThread = new DaemonThread(); // create object of thread class
+		jButton3.setEnabled(true);
+		jButton5.setEnabled(true);
+		webSource = new VideoCapture(0);
+		myThread = new DaemonThread();
 		Thread t = new Thread(myThread);
 		t.setDaemon(true);
 		myThread.runnable = true;
-		t.start(); // start thrad
-		jButton1.setEnabled(false); // deactivate start button
-		jButton2.setEnabled(true); // activate stop button
+		t.start();
+		jButton1.setEnabled(false);
+		jButton2.setEnabled(true);
 
 	}// GEN-LAST:event_jButton1ActionPerformed
 
@@ -272,25 +335,24 @@ public class FaceDetection extends JFrame {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
 		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
-					.getInstalledLookAndFeels()) {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
 					javax.swing.UIManager.setLookAndFeel(info.getClassName());
 					break;
 				}
 			}
 		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
-					.log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null,
+					ex);
 		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
-					.log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null,
+					ex);
 		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
-					.log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null,
+					ex);
 		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(FaceDetection.class.getName())
-					.log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(FaceDetection.class.getName()).log(java.util.logging.Level.SEVERE, null,
+					ex);
 		}
 		// </editor-fold>
 
@@ -334,9 +396,11 @@ public class FaceDetection extends JFrame {
 		this.recH = recH;
 	}
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
+	// Variables declaration - do not modify
 	private javax.swing.JButton jButton1;
 	private javax.swing.JButton jButton2;
+	private javax.swing.JButton jButton3;
+	private javax.swing.JButton jButton5;
 	private javax.swing.JPanel jPanel1;
-	// End of variables declaration//GEN-END:variables
+	// End of variables declaration
 }

@@ -41,7 +41,7 @@ public class FaceDetection extends JFrame {
 	Mat frame = new Mat();
 	MatOfByte mem = new MatOfByte();
 	CascadeClassifier faceDetector = new CascadeClassifier(
-			FaceDetection.class.getResource("haarcascade_frontalface_alt.xml").getPath().substring(1));
+			FaceDetection.class.getResource("haarcascade_frontalface_alt_tree.xml").getPath().substring(1));
 	MatOfRect faceDetections = new MatOfRect();
 	public int random = 0;
 	public int recX;
@@ -69,12 +69,14 @@ public class FaceDetection extends JFrame {
 							Graphics g = jPanel1.getGraphics();
 							faceDetector.detectMultiScale(frame, faceDetections);
 							for (Rect rect : faceDetections.toArray()) {
-								Imgproc.rectangle(frame, new Point(rect.x, rect.y),
-										new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
 								setRecX(rect.x);
 								setRecY(rect.y);
 								setRecW(rect.width);
 								setRecH(rect.height);
+							//	Imgproc.rectangle(frame, new Point(rect.x, rect.y),
+									//	new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 255, 0));
+								//
+								
 
 							}
 							Imgcodecs.imencode(".bmp", frame, mem);
@@ -87,82 +89,71 @@ public class FaceDetection extends JFrame {
 									this.wait();
 								} else {
 
-									/*
-									 * BufferedImage img = null; img =
-									 * ImageIO.read(new
-									 * File("files\\Hitler.png"));
-									 * g.drawImage(img, getRecX() + getRecW()/2,
-									 * getRecY(), getRecW()/2,
-									 * getRecW()/2,null); /
-									 * 
-									 * /* Hitler Mode
-									 * 
-									 * BufferedImage hitler = null; hitler =
-									 * ImageIO.read(new
-									 * File("files\\faca.png"));
-									 * g.drawImage(hitler, getRecX() +
-									 * getRecW()/3, getRecY() - getRecH()/2 -
-									 * 20, getRecW(), getRecW(),null);
-									 * 
-									 * 
-									 * BufferedImage hithat = null; hithat =
-									 * ImageIO.read(new
-									 * File("files\\hithat.png"));
-									 * g.drawImage(img, getRecX() + getRecW()/3,
-									 * getRecY() - getRecH() - 30, getRecW(),
-									 * getRecW(),null);
-									 * 
-									 * 
-									 * 
-									 */
-									// Osama mode
-
-									if (mozeGlumac == true) {
+									if (mozeFudbaler) {
 										switch (random) {
 										case 1:
-											img = ImageIO.read(new File("files\\sparta.png"));
-											g.drawImage(img, getRecX() + getRecW() / 3, getRecY() - getRecH() / 4,
+											img = ImageIO.read(new File("files\\messi.png"));
+											g.drawImage(img, getRecX() , getRecY() ,
 													getRecW(), getRecH(), null);
 											break;
 
 										case 2:
-											img = ImageIO.read(new File("files\\brad.png"));
-											g.drawImage(img, getRecX() + getRecW() / 3, getRecY() - getRecH() / 4,
+											img = ImageIO.read(new File("files\\ronaldo.png"));
+											g.drawImage(img, getRecX() +getRecW() / 3, getRecY() - getRecH() / 4,
 													getRecW(), getRecH(), null);
+											break;
+
+										}
+									}
+
+									if (mozeGlumac == true) {
+										switch (random) {
+										case 1:
+											
+											img = ImageIO.read(new File("files\\sparta.png"));
+											
+											g.drawImage(img, getRecX() +getRecX()/5, getRecY() -((getRecH())/2)   ,
+													getRecW() * 3 /2, getRecH()*3 /2, null);
+											
+											break;
+
+										case 2:
+											img = ImageIO.read(new File("files\\brad.png"));
+											g.drawImage(img, getRecX() + getRecX() / 4, getRecY() - getRecH() / 2,
+													getRecW()*4/3, getRecH()*4/3, null);
 											break;
 										case 3:
 											img = ImageIO.read(new File("files\\smit.png"));
-											g.drawImage(img, getRecX() + getRecW() / 3, getRecY() - getRecH() / 4,
-													getRecW(), getRecH(), null);
+											g.drawImage(img, getRecX() + getRecX() / 4, getRecY() - getRecH() / 2,
+													getRecW()*4/3, getRecH()*4/3, null);
 											break;
 										}
 									}
 									float scale = (float) 0.0;
-									if(getRecX() <50 && getRecY()<50){
+									if (getRecX() < 50 && getRecY() < 50) {
 										scale = (float) 2;
 									}
 									if (mozePoliticar == true) {
 										switch (random) {
 										case 1:
 											img = ImageIO.read(new File("files\\obama.png"));
-										    if((getRecX()>250 && getRecY()<100) || (getRecX()>200 && getRecY()<100)){
-											g.drawImage(img,getRecX() + (getRecW()/4*2), getRecY() - getRecH()*4 / 3,
-													getRecW(), getRecH(), null);
-											break;}else{
-												g.drawImage(img,getRecX() + getRecW() / 2, getRecY() - getRecH() / 3,
-														getRecW(), getRecH(), null);	
+											
+											    
+												g.drawImage(img, getRecX() + getRecX()/4, getRecY() - getRecH() / 2,
+														getRecW()*4/3, getRecH()*4/3, null);
+												
 												break;
-											}
+											
 
 										case 2:
 											img = ImageIO.read(new File("files\\kim.png"));
-											g.drawImage(img, getRecX() + getRecW() / 2, getRecY() - getRecH() / 3,
-													getRecW(), getRecH(), null);
+											g.drawImage(img, getRecX() + getRecX()/4, getRecY() - getRecH() /2,
+													getRecW()*3/2, getRecH()*3/2, null);
 											break;
 										case 3:
 											img = ImageIO.read(new File("files\\putin.png"));
-											g.drawImage(img, getRecX() + getRecW() / 2, getRecY() - getRecH() / 3,
-													getRecW(), getRecH(), null);
+											g.drawImage(img, getRecX() + getRecX() / 4, getRecY() - getRecH() / 2,
+													getRecW()*4/3, getRecH()*4/3, null);
 											break;
 										}
 									}
@@ -204,6 +195,7 @@ public class FaceDetection extends JFrame {
 		jButton1 = new javax.swing.JButton();
 		jButton2 = new javax.swing.JButton();
 		jButton3 = new javax.swing.JButton();
+
 		jButton5 = new javax.swing.JButton();
 		jButton3.setEnabled(false);
 		jButton5.setEnabled(false);
@@ -283,14 +275,14 @@ public class FaceDetection extends JFrame {
 	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {
 		random = randInt(1, 3);
 		mozePoliticar = true;
-		mozeGlumac= false;
+		mozeGlumac = false;
 
 	}
 
 	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
 		random = randInt(1, 3);
 		mozePoliticar = false;
-		mozeGlumac= true;
+		mozeGlumac = true;
 	}
 
 	public static int randInt(int min, int max) {
@@ -400,6 +392,7 @@ public class FaceDetection extends JFrame {
 	private javax.swing.JButton jButton1;
 	private javax.swing.JButton jButton2;
 	private javax.swing.JButton jButton3;
+	private javax.swing.JButton jButton4;
 	private javax.swing.JButton jButton5;
 	private javax.swing.JPanel jPanel1;
 	// End of variables declaration
